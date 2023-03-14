@@ -1,17 +1,23 @@
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MyUserWebApp.Areas.Identity.Data;
-using MyUserWebApp.Data;
+using MyUserWebApp.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MyUserWebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'MyUserWebAppContextConnection' not found.");
 
 builder.Services.AddDbContext<MyUserWebAppContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<MyUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MyUserWebAppContext>();
+builder.Services.AddDefaultIdentity<
+    
+    MyUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MyUserWebAppContext>();
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+//builder.Services.AddAuthentication("Bearer")  // схема аутентификации - с помощью jwt-токенов
+//    .AddJwtBearer();      // подключение аутентификации с помощью jwt-токенов
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

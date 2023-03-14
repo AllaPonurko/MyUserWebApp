@@ -2,7 +2,7 @@
 using MyUserWebApp.Models;
 using System.Diagnostics;
 
-namespace MyUserWebApp.Controllers
+namespace MyUserWebApp.Controllers.Home
 {
     public class HomeController : Controller
     {

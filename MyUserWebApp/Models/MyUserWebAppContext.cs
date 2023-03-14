@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MyUserWebApp.Areas.Identity.Data;
 
-namespace MyUserWebApp.Data;
+
+namespace MyUserWebApp.Models;
 
 public class MyUserWebAppContext : IdentityDbContext<MyUser>
 {
     public MyUserWebAppContext(DbContextOptions<MyUserWebAppContext> options)
         : base(options)
     {
+        Database.EnsureCreated();
     }
-
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
