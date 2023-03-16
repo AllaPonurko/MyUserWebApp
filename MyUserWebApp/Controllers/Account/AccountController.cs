@@ -90,7 +90,9 @@ namespace MyUserWebApp.Controllers.Account
                     // проверяем, принадлежит ли URL приложению
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        _logger.LogInformation("User logged in.");
+                        //return LocalRedirect(model.ReturnUrl);
+                        return RedirectToAction("MyAccount", "Home");
                     }
                     else
                     {
@@ -99,7 +101,7 @@ namespace MyUserWebApp.Controllers.Account
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                    ModelState.AddModelError("", "Wrong username and/or password");
                 }
             }
             return View(model);
