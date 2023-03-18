@@ -71,9 +71,8 @@ namespace MyUserWebApp.Controllers.Account
 
         
         [HttpGet]
-#pragma warning disable CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
         public IActionResult Login(string returnUrl = null)
-#pragma warning restore CS8625 // Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
+
         { 
             return View(new LoginModel { ReturnUrl = returnUrl });
         }
@@ -91,8 +90,8 @@ namespace MyUserWebApp.Controllers.Account
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         _logger.LogInformation("User logged in.");
-                        //return LocalRedirect(model.ReturnUrl);
-                        return RedirectToAction("MyAccount", "Home");
+                        return Redirect(model.ReturnUrl);
+
                     }
                     else
                     {

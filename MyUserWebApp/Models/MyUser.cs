@@ -9,5 +9,7 @@ namespace MyUserWebApp.Models;
 // Add profile data for application users by adding properties to the MyUser class
 public  class MyUser : IdentityUser
 {
+    
+
 }
 

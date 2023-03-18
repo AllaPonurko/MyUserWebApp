@@ -1,12 +1,15 @@
 ﻿
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyUserWebApp.Models;
 using MyUserWebApp.ViewModels;
+using System.Data;
 
 namespace MyUserWebApp.Controllers.Admin
 {
+    //[Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
         Microsoft.AspNetCore.Identity.UserManager<MyUser> _userManager;

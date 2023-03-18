@@ -3,6 +3,7 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "ConnectionStrings:MyUserWebAppContextConnection"
-    }
+    },
+    "vue": "^1.0.26"
   }
 }

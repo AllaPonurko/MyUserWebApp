@@ -1,5 +1,5 @@
-﻿@using MyUserWebApp.ViewModels;
-@model LoginModel
+﻿
+@model MyUserWebApp.ViewModels.LoginModel
 
 @{
     ViewData["Title"] = "Log in";
@@ -13,21 +13,19 @@
                 <h2>Use a local account to log in.</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Email" class="form-label">Email</label>
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                <div>
+                    <label asp-for="Email" class="form-label"></label><br />
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email"></span>
                 </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                <div @*class="form-floating mb-3"*@>
                     <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" /> 
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="checkbox mb-3">
-                    <label asp-for="RememberMe" class="form-label">
-                        <input class="form-check-input" asp-for="RememberMe" />
-                        @Html.DisplayNameFor(m => m.RememberMe)
-                    </label>
+                    <label asp-for="RememberMe"></label><br />
+                    <input asp-for="RememberMe" />
                 </div>
                 <div>
                     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
@@ -51,7 +49,7 @@
             <h3>Use another service to log in.</h3>
             <hr />
             @{
-                if ((Model.ExternalLogins?.Count ?? 0) =*@= 0)
+                if ((Model.ExternalLogins?.Count ?? 0) =*@@*= 0)*@
                 @*{
                     <div>
                         <p>
@@ -78,6 +76,4 @@
     </div>*@
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+
