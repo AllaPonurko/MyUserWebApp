@@ -20,13 +20,13 @@ namespace MyUserWebApp.Controllers.Account
         //private readonly IUserEmailStore<MyUser> _emailStore;
         private readonly ILogger<AccountController> _logger;
         private readonly IEmailSender _emailSender;
-
+        private readonly Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> _roleManager;
         public AccountController(
             Microsoft.AspNetCore.Identity.UserManager<MyUser> userManager,
             //IUserStore<MyUser> userStore,
             SignInManager<MyUser> signInManager,
             ILogger<AccountController> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             //_userStore = userStore;
@@ -34,6 +34,7 @@ namespace MyUserWebApp.Controllers.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager= roleManager;
         }
 
         [HttpGet]
@@ -46,11 +47,15 @@ namespace MyUserWebApp.Controllers.Account
         {
             if (ModelState.IsValid)
             {
-                MyUser user = new MyUser { Email = model.Email, UserName = model.Email };
+               
+                MyUser user = new MyUser { Email = model.Email, UserName = model.Email};
                 // добавляем пользователя
                 var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                //получаем роль
+                var role = await _roleManager.FindByNameAsync(model.Role.Name);
+                if (result.Succeeded&&role!=null)
                 {
+                    await _userManager.AddToRoleAsync(user,role.Name);
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");

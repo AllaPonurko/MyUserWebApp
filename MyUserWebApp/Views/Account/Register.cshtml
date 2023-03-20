@@ -1,6 +1,7 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
 @using MyUserWebApp.ViewModels;
 @model RegisterModel
+
 @{
     ViewData["Title"] = "Register";
 }
@@ -27,6 +28,14 @@
                 <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label asp-for="ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">  
+                <div id="radio" class="form-group"> 
+                    <input asp-for="Role" id="roleCustomer" checked="true" type="radio" name="Customer" value="Customer" />
+                    <span asp-validation-for="Role">Customer</span>
+                    <input asp-for="Role" id="roleAuthor" type="radio" name="Author" value="Author" />
+                    <span asp-validation-for="Role">Author</span>              
+                </div>          
             </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
@@ -66,3 +75,11 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+<@*script>
+    document.getElementById('registerSubmit').onclick = function () {
+        let radios = document.getElementsByName("chooseRole");
+        let selected = Array.from(radios).find(radio => radio.checked);
+        let chooseRole = document.getElementById('chooseRole');
+        chooseRole.value=selected.value;
+     }
+</script>*@

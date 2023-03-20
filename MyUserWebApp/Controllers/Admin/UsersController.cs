@@ -22,7 +22,10 @@ namespace MyUserWebApp.Controllers.Admin
         {
             return View(_userManager.Users.ToList());
         }
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
