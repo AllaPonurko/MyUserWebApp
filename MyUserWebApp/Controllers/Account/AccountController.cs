@@ -45,17 +45,20 @@ namespace MyUserWebApp.Controllers.Account
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
+            
+            
             if (ModelState.IsValid)
             {
                
                 MyUser user = new MyUser { Email = model.Email, UserName = model.Email};
                 // добавляем пользователя
                 var result = await _userManager.CreateAsync(user, model.Password);
+                
                 //получаем роль
-                var role = await _roleManager.FindByNameAsync(model.Role.Name);
-                if (result.Succeeded&&role!=null)
+                //var role = await _roleManager.FindByNameAsync(model.Role);
+                if (result.Succeeded==true/*&&role!=null*/)
                 {
-                    await _userManager.AddToRoleAsync(user,role.Name);
+                    //await _userManager.AddToRoleAsync(user,role.Name);
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");

@@ -24,7 +24,7 @@ namespace MyUserWebApp.ViewModels
         public string ConfirmPassword { get; set; }
         
        
-        public IdentityRole Role { get; set; }
+        //public string Role { get; set; }
         
     }
 }

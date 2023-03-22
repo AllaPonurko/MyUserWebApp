@@ -81,5 +81,5 @@ app.UseAuthorization();   // добавление middleware авторизации
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.Map("/data", [Authorize] () => new { message = "Hello World!" });
+//app.Map("/data", [Authorize] () => new { message = "Hello World!" });
 app.Run();
