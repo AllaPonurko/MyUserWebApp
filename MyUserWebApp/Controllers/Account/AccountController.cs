@@ -43,9 +43,9 @@ namespace MyUserWebApp.Controllers.Account
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register(IFormCollection form, RegisterModel model)
         {
-            
+          
             
             if (ModelState.IsValid)
             {
@@ -53,13 +53,13 @@ namespace MyUserWebApp.Controllers.Account
                 MyUser user = new MyUser { Email = model.Email, UserName = model.Email};
                 // добавляем пользователя
                 var result = await _userManager.CreateAsync(user, model.Password);
-                
+
                 //получаем роль
-                //var role = await _roleManager.FindByNameAsync(model.Role);
-                if (result.Succeeded==true/*&&role!=null*/)
+                var role = await _roleManager.FindByNameAsync(form["Role"].ToString());
+                if (result.Succeeded==true && role != null)
                 {
-                    //await _userManager.AddToRoleAsync(user,role.Name);
-                    // установка куки
+                    await _userManager.AddToRoleAsync(user, role.Name);
+                   // установка куки
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -88,23 +88,26 @@ namespace MyUserWebApp.Controllers.Account
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            if (ModelState.IsValid)
+            if (!string.IsNullOrEmpty(model.Email)&& !string.IsNullOrEmpty(model.Password))
             {
-                var result =
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                //var user =await _userManager.FindByEmailAsync(model.Email);
+
+                var result =await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    _logger.LogInformation("User logged in.");
+                    return RedirectToAction("Index", "Home");
                     // проверяем, принадлежит ли URL приложению
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        _logger.LogInformation("User logged in.");
-                        return Redirect(model.ReturnUrl);
+                    //if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    //{
+                    //    _logger.LogInformation("User logged in.");
+                    //    return Redirect(model.ReturnUrl);
 
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                    //}
+                    //else
+                    //{
+                    //    return RedirectToAction("Index", "Home");
+                    //}
                 }
                 else
                 {

@@ -1,4 +1,5 @@
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authorization;
@@ -16,28 +17,36 @@ var connectionString = builder.Configuration.GetConnectionString("MyUserWebAppCo
 
 builder.Services.AddDbContext<MyUserWebAppContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<MyUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<MyUser>(options => options.SignIn.RequireConfirmedAccount =false)
     .AddRoles<IdentityRole>().AddEntityFrameworkStores<MyUserWebAppContext>();
+//builder.Services.Configure<IdentityOptions>(options =>
+//options.SignIn.RequireConfirmedEmail = false);
 builder.Services.AddAuthorization();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)  // схема аутентификации - с помощью jwt-токенов
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = AuthOptions.ISSUER,
-            ValidateAudience = true,
-            ValidAudience = AuthOptions.AUDIENCE,
-            ValidateLifetime = true,
-            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            ValidateIssuerSigningKey = true
-        };
-    });      // подключение аутентификации с помощью jwt-токенов
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+});  // схема аутентификации - с помощью jwt-токенов
+    //.AddJwtBearer(options =>
+    //{
+    //    options.TokenValidationParameters = new TokenValidationParameters
+    //    {
+    //        ValidateIssuer = true,
+    //        ValidIssuer = AuthOptions.ISSUER,
+    //        ValidateAudience = true,
+    //        ValidAudience = AuthOptions.AUDIENCE,
+    //        ValidateLifetime = true,
+    //        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+    //        ValidateIssuerSigningKey = true
+    //    };
+    //});      // подключение аутентификации с помощью jwt-токенов
 var app = builder.Build();
-
+app.UseAuthentication();   // добавление middleware аутентификации 
+app.UseAuthorization();   // добавление middleware авторизации 
 //IHostEnvironment? env = app.Services.GetService<IHostEnvironment>();
 //if (env != null)
 //{
@@ -76,8 +85,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();   // добавление middleware аутентификации 
-app.UseAuthorization();   // добавление middleware авторизации 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
