@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.AspNet.Identity;
 using MyUserWebApp.ViewModels;
 using MyUserWebApp.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MyUserWebApp.Controllers.Account
 {
@@ -45,8 +46,6 @@ namespace MyUserWebApp.Controllers.Account
         [HttpPost]
         public async Task<IActionResult> Register(IFormCollection form, RegisterModel model)
         {
-          
-            
             if (ModelState.IsValid)
             {
                
@@ -73,49 +72,61 @@ namespace MyUserWebApp.Controllers.Account
             }
             return View(model);
         }
-       
-        
-        //public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
+
+        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+        [TempData]
+          public string ErrorMessage { get; set; }
         
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public async Task<IActionResult> LoginAsync(string returnUrl=null)
 
-        { 
+        {
+            
+            if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                ModelState.AddModelError(string.Empty, ErrorMessage);
+            }
+
+            returnUrl ??= Url.Content("~/");
+
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             return View(new LoginModel { ReturnUrl = returnUrl });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            if (!string.IsNullOrEmpty(model.Email)&& !string.IsNullOrEmpty(model.Password))
+            if (ModelState.IsValid)
             {
-                
-                var result =await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result =
+                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return RedirectToAction("Index", "Home");
-                    // проверяем, принадлежит ли URL приложению
-                    //if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    //{
-                    //    _logger.LogInformation("User logged in.");
-                    //    return Redirect(model.ReturnUrl);
+                    
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    {
+                        _logger.LogInformation("User logged in");
+                        return Redirect(model.ReturnUrl);
 
-                    //}
-                    //else
-                    //{
-                    //    return RedirectToAction("Index", "Home");
-                    //}
+                    }
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Wrong username and/or password");
+                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
                 }
             }
             return View(model);
         }
-
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -131,7 +142,7 @@ namespace MyUserWebApp.Controllers.Account
         //    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         //}
 
-        
+
 
         private MyUser CreateUser()
         {
