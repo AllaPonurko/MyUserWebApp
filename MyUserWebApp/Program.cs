@@ -38,7 +38,7 @@ builder.Services.AddControllersWithViews();
 //});  
 var app = builder.Build();
 app.UseAuthentication();   // добавление middleware аутентификации 
-app.UseAuthorization();   // добавление middleware авторизации 
+/*app.UseAuthorization(); */  // добавление middleware авторизации 
 
 if (!app.Environment.IsDevelopment())
 {
@@ -51,7 +51,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

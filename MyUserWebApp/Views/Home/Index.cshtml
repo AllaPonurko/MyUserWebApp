@@ -4,16 +4,24 @@
     ViewData["Title"] = "Home Page";
 }
 <h2>Home Page</h2>
-@if (User.Identity.IsAuthenticated)
-{<p>@User.Identity.Name</p>
-
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+      <p>Hello, @User.Identity.Name</p>
+    <a asp-action="Index" asp-controller="Roles">List of roles</a>
+    <a asp-action="Index" asp-controller="Users">List of users</a>
     <form method="post" asp-controller="Account" asp-action="Logout">
         <input type="submit" value="Exit" />
     </form>
-    
-    
 }
-else
+@if  (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+{
+<p>@User.Identity.Name</p>
+
+<form method="post" asp-controller="Account" asp-action="Logout">
+    <input type="submit" value="Exit" />
+</form>
+}
+@if (!User.Identity.IsAuthenticated )
 {
     <p>"You are not logged in"</p>
     <p><a asp-controller="Account" asp-action="Login" >Log in</a></p>

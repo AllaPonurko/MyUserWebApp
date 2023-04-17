@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyUserWebApp.Models;
 using System.Diagnostics;
 
@@ -12,12 +13,16 @@ namespace MyUserWebApp.Controllers.Home
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
-            return View();
+            return View();           
         }
-
+        [Authorize]
+        public IActionResult UserPage()
+        {
+            return Content(User.Identity.Name);
+        }
         public IActionResult Privacy()
         {
             return View();

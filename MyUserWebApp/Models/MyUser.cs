@@ -13,5 +13,6 @@ public class MyUser : IdentityUser
     {
         throw new NotImplementedException();
     }
+    //public List<IdentityRole>? Roles { get; set; }=new List<IdentityRole>();
 }
 

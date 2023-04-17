@@ -30,11 +30,15 @@
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">  
-                <div id="radio" class="form-group"> 
-                    <input asp-for="Role" id="roleCustomer" checked="true" type="radio" name="Role" value="Customer" />
+                <div id="chbx" class="form-group"> 
+                    <select asp-for="Role" multiple="multiple" name="Role">
+                        <option value="Customer">Customer</option>
+                        <option value="Author">Author</option>
+                    </select>
+                    @*<input asp-for="Role" id="Customer" checked="checked" name="Role" type="checkbox" value="true" />
                     <span asp-validation-for="Role">Customer</span>
-                    <input asp-for="Role" id="roleAuthor" type="radio" name="Role" value="Author" />
-                    <span asp-validation-for="Role">Author</span>              
+                    <input asp-for="Role" id="Author" type="checkbox" name="Role" value="true" />
+                    <span asp-validation-for="Role">Author</span>     *@         
                 </div>          
             </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
@@ -75,11 +79,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-<@*script>
-    document.getElementById('registerSubmit').onclick = function () {
-        let radios = document.getElementsByName("chooseRole");
-        let selected = Array.from(radios).find(radio => radio.checked);
-        let chooseRole = document.getElementById('chooseRole');
-        chooseRole.value=selected.value;
-     }
-</script>*@

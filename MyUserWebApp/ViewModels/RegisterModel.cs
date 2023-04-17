@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace MyUserWebApp.ViewModels
@@ -23,8 +24,8 @@ namespace MyUserWebApp.ViewModels
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-
-        public string Role { get; set; }
+        
+        public string Role { get; set; } 
 
     }
 }

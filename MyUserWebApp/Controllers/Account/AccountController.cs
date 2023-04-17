@@ -48,16 +48,25 @@ namespace MyUserWebApp.Controllers.Account
         {
             if (ModelState.IsValid)
             {
-               
+                string[] l = form["Role"].ToString().Split(",");
                 MyUser user = new MyUser { Email = model.Email, UserName = model.Email};
                 // добавляем пользователя
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 //получаем роль
-                var role = await _roleManager.FindByNameAsync(form["Role"].ToString());
-                if (result.Succeeded==true && role != null)
+                List<object> roles = new List<object>();
+                foreach(string role in l)
                 {
-                    await _userManager.AddToRoleAsync(user, role.Name);
+                    roles.Add(await _roleManager.FindByNameAsync(role));
+                }
+                
+                if (result.Succeeded==true && roles.Capacity != 0)
+                {
+                    foreach(var r in roles)
+                    {
+                      await _userManager.AddToRoleAsync(user, r.ToString());
+                    }
+                    
                    // установка куки
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
