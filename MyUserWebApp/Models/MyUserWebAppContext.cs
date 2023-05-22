@@ -6,13 +6,15 @@ using Microsoft.EntityFrameworkCore;
 namespace MyUserWebApp.Models;
 
 public class MyUserWebAppContext : IdentityDbContext<MyUser>
-{
+{  
     public MyUserWebAppContext(DbContextOptions<MyUserWebAppContext> options)
         : base(options)
     {
         Database.EnsureCreated();
     }
     
+    //DbSet<CartItem> CartItems { get; set; }
+    //DbSet<Product> Products { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

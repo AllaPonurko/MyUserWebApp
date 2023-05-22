@@ -1,4 +1,4 @@
-using Microsoft.AspNet.Identity;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
@@ -25,9 +25,6 @@ builder.Services.AddDefaultIdentity<MyUser>(options => options.SignIn.RequireCon
 
 builder.Services.AddDbContext<MyUserWebAppContext>(options => options.UseSqlServer(connectionString));
 
-
-
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 //builder.Services.AddAuthentication(options =>
@@ -37,8 +34,8 @@ builder.Services.AddControllersWithViews();
 //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 //});  
 var app = builder.Build();
-app.UseAuthentication();   // добавление middleware аутентификации 
-/*app.UseAuthorization(); */  // добавление middleware авторизации 
+app.UseAuthentication();   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ middleware пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+/*app.UseAuthorization(); */  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ middleware пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
 
 if (!app.Environment.IsDevelopment())
 {
@@ -49,6 +46,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+
 
 app.UseRouting();
 app.UseAuthorization();

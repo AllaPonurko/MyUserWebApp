@@ -1,30 +1,53 @@
 ﻿@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 @using System.Security.Principal;
+@using Microsoft.AspNetCore.Identity
+@using MyUserWebApp.Models
+@model MyUserWebApp.ViewModels.EditUserViewModel
+@inject SignInManager<MyUser> SignInManager
+@inject UserManager<MyUser> UserManager
 @{
     ViewData["Title"] = "Home Page";
+    var userId = ViewBag.UserId;
 }
+
+
 <h2>Home Page</h2>
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
-      <p>Hello, @User.Identity.Name</p>
+    <p>Hello, @User.Identity.Name</p>
     <a asp-action="Index" asp-controller="Roles">List of roles</a>
     <a asp-action="Index" asp-controller="Users">List of users</a>
-    <form method="post" asp-controller="Account" asp-action="Logout">
-        <input type="submit" value="Exit" />
-    </form>
+    <div>
+    <a method="post" asp-controller="Home" asp-action="EditProfile" asp-route-id="@userId">
+        <input type="submit" class="btn btn-sm btn-primary" value="Edit profile" />
+    </a>
+    </div>
+    <label></label>
+        <form  method="post" asp-controller="Account" asp-action="Logout">
+        <input type="submit" class="btn btn-sm btn-secondary" value="Exit" />
+        </form>
+   
 }
 @if  (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
 {
-<p>@User.Identity.Name</p>
+    <p>Hello, @User.Identity.Name</p>
 
-<form method="post" asp-controller="Account" asp-action="Logout">
-    <input type="submit" value="Exit" />
-</form>
+    @*<form action="MyUserWebApp/Views/Shoping/PaymentPage.html" target="_blank">
+            <button>Choose course</button> 
+    </form>*@
+    <div>
+        <a method="post" asp-controller="Home" asp-action="EditProfile" asp-route-id="@userId">
+            <input type="submit" class="btn btn-sm btn-primary" value="Edit profile" />
+        </a>
+    </div>
+    <label></label>
+    <form method="post" asp-controller="Account" asp-action="Logout">
+        <input type="submit" class="btn btn-sm btn-secondary" value="Exit" />
+    </form>
 }
 @if (!User.Identity.IsAuthenticated )
 {
     <p>"You are not logged in"</p>
     <p><a asp-controller="Account" asp-action="Login" >Log in</a></p>
-    <p><a asp-controller="Account" asp-action="Register">Register</a></p>
-    
+    <p><a asp-controller="Account" asp-action="Register">Register</a></p>   
 }

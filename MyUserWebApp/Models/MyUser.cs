@@ -9,10 +9,11 @@ namespace MyUserWebApp.Models;
 // Add profile data for application users by adding properties to the MyUser class
 public class MyUser : IdentityUser
 {
-    public static implicit operator IdentityRole?(MyUser? v)
-    {
-        throw new NotImplementedException();
-    }
-    //public List<IdentityRole>? Roles { get; set; }=new List<IdentityRole>();
+
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Image { get; set; }
+
+
 }
 

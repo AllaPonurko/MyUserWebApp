@@ -1,0 +1,10 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<form action="https://www.liqpay.ua/api/3/checkout" method="POST">
+    <input type="hidden" name="data" value="@Model.token">
+    <input type="hidden" name="signature" value="@Model.signature">
+    <input type="submit" value="Pay with LiqPay">
+</form>

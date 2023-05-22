@@ -34,6 +34,7 @@
                     <select asp-for="Role" multiple="multiple" name="Role">
                         <option value="Customer">Customer</option>
                         <option value="Author">Author</option>
+                        <option value="Admin" hidden="true" contextmenu="Admin">Admin</option>
                     </select>
                     @*<input asp-for="Role" id="Customer" checked="checked" name="Role" type="checkbox" value="true" />
                     <span asp-validation-for="Role">Customer</span>

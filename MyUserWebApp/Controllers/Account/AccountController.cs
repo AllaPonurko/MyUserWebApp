@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Text;
-using Microsoft.AspNet.Identity;
 using MyUserWebApp.ViewModels;
 using MyUserWebApp.Models;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace MyUserWebApp.Controllers.Account
 {
@@ -119,9 +119,15 @@ namespace MyUserWebApp.Controllers.Account
                     
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
+                        if (User.Identity.IsAuthenticated)
+                        {
+                            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                            ViewBag.UserId = userId;
+                            ViewBag.UserEmail = model.Email;
+                            
+                        }
                         _logger.LogInformation("User logged in");
                         return Redirect(model.ReturnUrl);
-
                     }
                     else
                     {

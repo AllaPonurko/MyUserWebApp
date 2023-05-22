@@ -1,5 +1,5 @@
 ﻿
-using Microsoft.AspNet.Identity;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +9,11 @@ using System.Data;
 
 namespace MyUserWebApp.Controllers.Admin
 {
-    //[Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
-        Microsoft.AspNetCore.Identity.UserManager<MyUser> _userManager;
+        UserManager<MyUser> _userManager;
 
-        public UsersController(Microsoft.AspNetCore.Identity.UserManager<MyUser> userManager)
+        public UsersController(UserManager<MyUser> userManager)
         {
             _userManager = userManager;
         }
@@ -22,10 +21,9 @@ namespace MyUserWebApp.Controllers.Admin
         {
             return View(_userManager.Users.ToList());
         }
-        public IActionResult Create()
-        {
-            return View();
-        }
+        [HttpGet]
+        public IActionResult Create() => View();
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
@@ -47,7 +45,7 @@ namespace MyUserWebApp.Controllers.Admin
             }
             return View(model);
         }
-
+        
         public async Task<IActionResult> Edit(string id)
         {
             MyUser user = await _userManager.FindByIdAsync(id);
@@ -55,7 +53,13 @@ namespace MyUserWebApp.Controllers.Admin
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email };
+            EditUserViewModel model = new EditUserViewModel
+            { 
+                Id = user.Id,
+                Email = user.Email,
+                LastName = user.LastName,
+                FirstName = user.FirstName
+            };
             return View(model);
         }
 
@@ -67,9 +71,11 @@ namespace MyUserWebApp.Controllers.Admin
                 MyUser user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
+                    user.Id = model.Id;
                     user.Email = model.Email;
                     user.UserName = model.Email;
-
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
