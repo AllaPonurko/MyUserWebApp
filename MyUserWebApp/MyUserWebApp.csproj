@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Users\Create.cshtml" />
+    <Content Remove="Views\Admin\Create.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,18 +44,19 @@
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Controllers\Api\" />
+    <Folder Include="wwwroot\store\avatars\" />
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Users\Create.cshtml" />
+    <UpToDateCheckInput Remove="Views\Admin\Create.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Users\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\Create.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Users\Create.cshtml" />
+    <None Include="Views\Admin\Create.cshtml" />
   </ItemGroup>
 
 </Project>

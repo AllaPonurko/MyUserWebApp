@@ -16,9 +16,9 @@
 {
     <p>Hello, @User.Identity.Name</p>
     <a asp-action="Index" asp-controller="Roles">List of roles</a>
-    <a asp-action="Index" asp-controller="Users">List of users</a>
+    <a asp-action="Index" asp-controller="Admin">List of users</a>
     <div>
-    <a method="post" asp-controller="Home" asp-action="EditProfile" asp-route-id="@userId">
+    <a method="post" asp-controller="Users" asp-action="EditProfile" asp-route-id="@userId">
         <input type="submit" class="btn btn-sm btn-primary" value="Edit profile" />
     </a>
     </div>
@@ -36,7 +36,7 @@
             <button>Choose course</button> 
     </form>*@
     <div>
-        <a method="post" asp-controller="Home" asp-action="EditProfile" asp-route-id="@userId">
+        <a method="post" asp-controller="Users" asp-action="EditProfile" asp-route-id="@userId">
             <input type="submit" class="btn btn-sm btn-primary" value="Edit profile" />
         </a>
     </div>

@@ -13,7 +13,7 @@ public class MyUser : IdentityUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Image { get; set; }
-
+    public string? AboutMe { get; set; }
 
 }
 

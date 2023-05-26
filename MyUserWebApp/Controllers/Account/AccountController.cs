@@ -16,18 +16,18 @@ namespace MyUserWebApp.Controllers.Account
     public class AccountController:Controller
     {
         private readonly SignInManager<MyUser> _signInManager;
-        private readonly Microsoft.AspNetCore.Identity.UserManager<MyUser> _userManager;
+        private readonly UserManager<MyUser> _userManager;
         //private readonly IUserStore<MyUser> _userStore;
         //private readonly IUserEmailStore<MyUser> _emailStore;
         private readonly ILogger<AccountController> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         public AccountController(
-            Microsoft.AspNetCore.Identity.UserManager<MyUser> userManager,
+            UserManager<MyUser> userManager,
             //IUserStore<MyUser> userStore,
             SignInManager<MyUser> signInManager,
             ILogger<AccountController> logger,
-            IEmailSender emailSender, Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             //_userStore = userStore;
