@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Azure.Messaging;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyUserWebApp.Controllers.Home;
 using MyUserWebApp.Models;
 using MyUserWebApp.MyRepository;
 using MyUserWebApp.ViewModels;
+using NuGet.Protocol.Plugins;
 using System.Security.Claims;
 
 namespace MyUserWebApp.Controllers.Users
@@ -12,8 +14,8 @@ namespace MyUserWebApp.Controllers.Users
     {
         private readonly SignInManager<MyUser> _signInManager;
         private readonly ILogger<HomeController> _logger;
-        UserManager<MyUser> _userManager;
-        RepositoryCRUD _cRUD;
+        private readonly UserManager<MyUser> _userManager;
+        private readonly RepositoryCRUD _cRUD;
         public UsersController(ILogger<HomeController> logger, UserManager<MyUser> userManager,
             RepositoryCRUD cRUD, SignInManager<MyUser> signInManager/*,IWebHostEnvironment hostingEnvironment*/)
         {
@@ -30,81 +32,71 @@ namespace MyUserWebApp.Controllers.Users
         public IActionResult Profile()
         {
             if (User.Identity.IsAuthenticated)
-                return Content(User.Identity.Name);
+            {
+                ViewBag.UserName = User.Identity.Name;
+               return RedirectToAction("GetProfile", "Users");
+            }
             else
-                return Content("You are not logged in ");
+               return RedirectToAction("Index", "Home");
         }
         //отримання форми с даними для редагування профілю користувача
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
-            EditUserViewModel model = new EditUserViewModel();
+
             if (User.Identity.IsAuthenticated)
             {
-                model.Id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                ViewBag.UserId = model.Id;
+                ViewBag.UserName = User.Identity.Name;
+                ViewBag.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                EditUserViewModel model = await _cRUD.GetViewProfile(id);
+                return View(model);
             }
-            MyUser user = await _userManager.FindByIdAsync(model.Id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            model.Email = user.Email;
-            model.LastName = user.LastName;
-            model.FirstName = user.FirstName;
-            model.AboutMe = user.AboutMe;
-            model.Image = user.Image;
-            return View(model);
+            else return RedirectToAction("Index", "Home");
+            //EditUserViewModel model = new EditUserViewModel();
+            //if (User.Identity.IsAuthenticated)
+            //{
+            //    model.Id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //    ViewBag.UserId = model.Id;
+            //}
+            //MyUser user = await _userManager.FindByIdAsync(model.Id);
+            //if (user == null)
+            //{
+            //    return NotFound();
+            //}
+            //model.Email = user.Email;
+            //model.LastName = user.LastName;
+            //model.FirstName = user.FirstName;
+            //model.AboutMe = user.AboutMe;
+            //model.Image = user.Image;
+            
         }
         // редагування профілю користувача
         [HttpPost]
         public async Task<IActionResult> EditProfile(IFormFile avatarFile, EditUserViewModel model)
         {
-            //_cRUD.Edit(model);  
-            if (ModelState.IsValid)
+            var user=(IItem)await  _cRUD.Edit(avatarFile, model);
+            //if (ModelState.IsValid)
+            //{
+            //    MyUser user = await _cRUD.FindMyUserById(model.Id);
+            //    if (user != null)
+            //    {
+            //        user.Id = model.Id;
+            //        user.Email = model.Email;
+            //        user.UserName = model.Email;
+            //        user.FirstName = model.FirstName;
+            //        user.LastName = model.LastName;
+            //        user.AboutMe = model.AboutMe;
+
+
+            //        TempData["SuccessMessage"] = "The image has been uploaded successfully";
+
+            //        user.Image = await UploadAvatar(avatarFile);
+            var result = await _userManager.UpdateAsync((MyUser)user);
+            if (result.Succeeded)
             {
-                MyUser user = await _userManager.FindByIdAsync(model.Id);
-                if (user != null)
-                {
-                    user.Id = model.Id;
-                    user.Email = model.Email;
-                    user.UserName = model.Email;
-                    user.FirstName = model.FirstName;
-                    user.LastName = model.LastName;
-                    user.AboutMe = model.AboutMe;
-
-                    if (avatarFile == null || avatarFile.Length == 0)
-                    {
-                        // Обробка помилки, якщо файл не було завантажено
-                        return BadRequest();
-                    }
-
-                    // Створення унікального імені файлу
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + avatarFile.FileName;
-
-                    // Визначення шляху для збереження файлу
-                    string urlPath = "/store/avatars";
-                    string uploadsFolder = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "wwwroot" + urlPath));
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    //if (!Directory.Exists(filePath))
-                    //{
-                    //    Directory.CreateDirectory(filePath);
-                    //}
-                    // Збереження файлу на сервері
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await avatarFile.CopyToAsync(fileStream);
-                    }
-
-
-                    TempData["SuccessMessage"] = "The image has been uploaded successfully";
-
-                    user.Image = filePath;
-                    var result = await _userManager.UpdateAsync(user);
-                    if (result.Succeeded)
-                    {
                         return RedirectToAction("Index","Home");
-                    }
+            }
                     else
                     {
                         foreach (var error in result.Errors)
@@ -112,8 +104,8 @@ namespace MyUserWebApp.Controllers.Users
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
                     }
-                }
-            }
+                
+            
             return View(model);
         }
         [HttpPost]
@@ -197,43 +189,15 @@ namespace MyUserWebApp.Controllers.Users
             return View(model);
 
         }
-        // завантаження автарки користувача
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadAvatar(IFormFile avatarFile, string id)
+       
+        
+        
+        [HttpGet]
+        public async Task<IActionResult>GetProfile(string name)
         {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-            if (avatarFile == null || avatarFile.Length == 0)
-            {
-                // Обробка помилки, якщо файл не було завантажено
-                return BadRequest();
-            }
-
-            // Створення унікального імені файлу
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + avatarFile.FileName;
-
-            // Визначення шляху для збереження файлу
-            string urlPath = "/store/avatars/";
-            string uploadsFolder = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "wwwroot" + urlPath));
-            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-            if (!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
-            // Збереження файлу на сервері
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await avatarFile.CopyToAsync(fileStream);
-            }
-
-            // Додаткова логіка для збереження шляху до файлу в базі даних або іншому місці
-
-            return Content("The file has been successfully uploaded ");
+            ViewBag.UserName = User.Identity.Name;
+            ProfileViewModel model = (ProfileViewModel)await _cRUD.Profile(name);
+            return View(model);
         }
     }
 }

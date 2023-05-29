@@ -34,7 +34,8 @@
     </div> 
     }
     <lable></lable>
-    <div @*method="post"  action="@Url.Action("UploadAvatar", "Home")"*@>
+    <div class="form-group" @*method="post" action="@Url.Action("UploadAvatar", "Home")"*@>
+        <lable asp-for="Image" class="control-label">Image</lable>
         <input type="file" asp-for="Image" name="avatarFile" accept="image/*" />
         @*<button type="submit" class="btn btn-secondary">Upload</button>*@
     </div>
@@ -52,7 +53,7 @@
     </div>
 </form>
 <form method="post" action="@Url.Action("/Users/Delete")">
-        <input type="hidden" name="userId" value="@Model.Id" />
+    <input type="hidden" name="userId" value="@Model.Id" />
         <button type="button" class="btn btn-danger" data-toggle="modal"
         data-target="#confirmDeleteModal">Delete</button>
         

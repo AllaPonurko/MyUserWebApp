@@ -35,9 +35,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Utils" Version="7.0.6" />
+    <PackageReference Include="NPOI" Version="2.6.0" />
     <PackageReference Include="PayPal" Version="1.9.1" />
     <PackageReference Include="PrivatBank.LiqPay" Version="1.0.0" />
     <PackageReference Include="SKit.LiqPay.SDK" Version="1.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
     <PackageReference Include="vue" Version="2.6.11" />
   </ItemGroup>
 

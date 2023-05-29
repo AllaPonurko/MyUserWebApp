@@ -1,6 +1,8 @@
-﻿namespace MyUserWebApp.ViewModels
+﻿using MyUserWebApp.MyRepository;
+
+namespace MyUserWebApp.ViewModels
 {
-    public class EditUserViewModel
+    public class EditUserViewModel: IItem
     {
         public string Id { get; set; }
         public string Email { get; set; }

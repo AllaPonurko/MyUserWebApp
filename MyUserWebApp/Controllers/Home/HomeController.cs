@@ -20,10 +20,13 @@ namespace MyUserWebApp.Controllers.Home
         
         public IActionResult Index()
         {
-            //if (User.Identity.IsAuthenticated)
-            //{
-            //    ViewBag.UserName = User.Identity.Name;
-            //}
+            if (User.Identity.IsAuthenticated)
+            {
+                ViewBag.UserName = User.Identity.Name;
+                ViewBag.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+               
+
+            }
             return View();           
         }
        

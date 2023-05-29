@@ -1,0 +1,33 @@
+﻿@model MyUserWebApp.ViewModels.ProfileViewModel
+@{
+    var userId = ViewBag.UserId;
+    var userName = ViewBag.UserName;
+}
+<head>
+    <title>My Profile</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<form enctype="multipart/form-data" asp-route-name="@userName">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+    </div>
+    <div class="form-group">
+        <img src="~/store/avatars/" alt="Аватарка" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label">Email</label>
+        <input type="text" asp-for="Email" class="form-control" />
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="FirstName" class="control-label">First name</label>
+        <input type="text" asp-for="FirstName" class="form-control" />
+    </div>
+    
+    <lable></lable> 
+    <div class="form-group"> 
+        <a href="/Users/EditProfile"  class="btn btn-primary">Edit</a>
+        <a href="/Home/Index" class="btn btn-secondary">Cancle</a>
+    </div>
+</form>

@@ -8,6 +8,7 @@
 @{
     ViewData["Title"] = "Home Page";
     var userId = ViewBag.UserId;
+    var userName=ViewBag.UserName;
 }
 
 
@@ -18,9 +19,12 @@
     <a asp-action="Index" asp-controller="Roles">List of roles</a>
     <a asp-action="Index" asp-controller="Admin">List of users</a>
     <div>
-    <a method="post" asp-controller="Users" asp-action="EditProfile" asp-route-id="@userId">
+        <a method="post" asp-controller="Users" asp-action="EditProfile" asp-route-id="@userId">
         <input type="submit" class="btn btn-sm btn-primary" value="Edit profile" />
     </a>
+        <a method="get" asp-controller="Users" asp-action="GetProfile" asp-route-name="@userName">
+            <input type="submit" class="btn btn-sm btn-primary" value="GetProfile" />
+        </a>
     </div>
     <label></label>
         <form  method="post" asp-controller="Account" asp-action="Logout">
@@ -38,6 +42,9 @@
     <div>
         <a method="post" asp-controller="Users" asp-action="EditProfile" asp-route-id="@userId">
             <input type="submit" class="btn btn-sm btn-primary" value="Edit profile" />
+        </a>
+        <a method="get" asp-controller="Users" asp-action="GetProfile" asp-route-name="@userName">
+            <input type="submit" class="btn btn-sm btn-primary" value="GetProfile" />
         </a>
     </div>
     <label></label>
