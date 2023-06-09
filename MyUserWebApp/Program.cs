@@ -29,7 +29,7 @@ builder.Services.AddDbContext<MyUserWebAppContext>(options => options.UseSqlServ
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<RepositoryCRUD>();
+builder.Services.AddScoped<CRUD_Repository>();
 
 //builder.Services.AddAuthentication(options =>
 //{

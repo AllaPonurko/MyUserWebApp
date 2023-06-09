@@ -9,6 +9,7 @@
     ViewData["Title"] = "Home Page";
     var userId = ViewBag.UserId;
     var userName=ViewBag.UserName;
+    var userImage = ViewBag.AvatarPath;
 }
 
 
@@ -23,7 +24,7 @@
         <input type="submit" class="btn btn-sm btn-primary" value="Edit profile" />
     </a>
         <a method="get" asp-controller="Users" asp-action="GetProfile" asp-route-name="@userName">
-            <input type="submit" class="btn btn-sm btn-primary" value="GetProfile" />
+            <input type="submit" class="btn btn-sm btn-primary" value="Get Profile" />
         </a>
     </div>
     <label></label>

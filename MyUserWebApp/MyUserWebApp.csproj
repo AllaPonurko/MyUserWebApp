@@ -18,6 +18,7 @@
     <PackageReference Include="Google.Apis.Auth" Version="1.60.0" />
     <PackageReference Include="Google.Apis.PaymentsResellerSubscription.v1" Version="1.60.0.3045" />
     <PackageReference Include="LiqPay" Version="2023.5.307.406" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.5" />
@@ -46,7 +47,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\" />
-    <Folder Include="Controllers\Api\" />
     <Folder Include="wwwroot\store\avatars\" />
   </ItemGroup>
 

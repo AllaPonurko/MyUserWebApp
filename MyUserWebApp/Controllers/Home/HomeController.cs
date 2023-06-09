@@ -12,20 +12,22 @@ namespace MyUserWebApp.Controllers.Home
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        
-        public HomeController(ILogger<HomeController> logger)
+        private readonly CRUD_Repository _cRUD;
+        public HomeController(ILogger<HomeController> logger,CRUD_Repository cRUD)
         {
-            _logger = logger; 
+            _logger = logger;
+            _cRUD= cRUD;
         }
         
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (User.Identity.IsAuthenticated)
             {
                 ViewBag.UserName = User.Identity.Name;
                 ViewBag.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-               
-
+                MyUser user = await _cRUD.FindMyUser(User.Identity.Name);
+                string? avatarPath = user.Image;
+                ViewBag.AvatarPath = avatarPath;
             }
             return View();           
         }
