@@ -5,16 +5,18 @@ using MyUserWebApp.ViewModels;
 using System.Security.Claims;
 using NPOI.SS.Formula.Functions;
 using System.Web.Mvc;
+using MyUserWebApp.MyException;
 
 namespace MyUserWebApp.MyRepository
 {
     public class CRUD_Repository : ICRUD_Repository
     {
         UserManager<MyUser> _userManager;
-
-        public CRUD_Repository(UserManager<MyUser> userManager)
+        AllException _exciption;
+        public CRUD_Repository(UserManager<MyUser> userManager, AllException exciption)
         {
             _userManager = userManager;
+            _exciption = exciption;
         }
 
         public async Task<bool> Delete(string id)
@@ -22,7 +24,7 @@ namespace MyUserWebApp.MyRepository
             MyUser user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return RankException("User does not exist");
+                return _exciption.RankException("User does not exist");
             }
             IdentityResult result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
@@ -37,10 +39,7 @@ namespace MyUserWebApp.MyRepository
             }
         }
 
-        private bool RankException(string v)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public async Task<EditUserViewModel> GetViewProfile(string id)
         {
@@ -61,22 +60,19 @@ namespace MyUserWebApp.MyRepository
             MyUser user = await _userManager.FindByNameAsync(name);
             if (user == null)
             {
-                return NotFoundObjectResult("Customer is not found");
+                return _exciption.NotFoundObjectResult("Customer is not found");
             }
             return user;
         }
 
-        private MyUser NotFoundObjectResult(string v)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public async Task<MyUser> FindMyUserById(string id)
         {
             MyUser user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFoundObjectResult("Customer is not found");
+                return _exciption.NotFoundObjectResult("Customer is not found");
             }
             return user;
         }
@@ -131,7 +127,7 @@ namespace MyUserWebApp.MyRepository
                 if (avatarFile == null || avatarFile.Length == 0)
                 {
                     // Обробка помилки, якщо файл не було завантажено
-                    return ArgumentNullException("The file was not loaded.");
+                    return _exciption.ArgumentNullException("The file was not loaded.");
                 }
 
                 // Створення унікального імені файлу
@@ -157,9 +153,6 @@ namespace MyUserWebApp.MyRepository
                 return filePath;
         }
 
-        private string ArgumentNullException(string v)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
