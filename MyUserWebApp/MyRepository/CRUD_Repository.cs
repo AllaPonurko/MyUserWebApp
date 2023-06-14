@@ -6,6 +6,7 @@ using System.Security.Claims;
 using NPOI.SS.Formula.Functions;
 using System.Web.Mvc;
 using MyUserWebApp.MyException;
+using System.Collections;
 
 namespace MyUserWebApp.MyRepository
 {
@@ -18,10 +19,14 @@ namespace MyUserWebApp.MyRepository
             _userManager = userManager;
             _exciption = exciption;
         }
-
+        public Task<ICollection>? GetAllUsers()
+        {
+            return _userManager.Users as ICollection as Task<ICollection>;
+        }
+        //видалення користувача
         public async Task<bool> Delete(string id)
         {
-            MyUser user = await _userManager.FindByIdAsync(id);
+            MyUser user = await FindMyUserById(id);
             if (user == null)
             {
                 return _exciption.RankException("User does not exist");
@@ -54,7 +59,7 @@ namespace MyUserWebApp.MyRepository
             return model;
         }
 
-
+        //пошук користувача по name
         public async Task<MyUser> FindMyUser(string name)
         {
             MyUser user = await _userManager.FindByNameAsync(name);
@@ -65,8 +70,8 @@ namespace MyUserWebApp.MyRepository
             return user;
         }
 
-        
 
+        //пошук користувача по id
         public async Task<MyUser> FindMyUserById(string id)
         {
             MyUser user = await _userManager.FindByIdAsync(id);
@@ -76,7 +81,7 @@ namespace MyUserWebApp.MyRepository
             }
             return user;
         }
-
+        //отримання моделі профілю користувача
         public async Task<IItem> Profile(string userName)
         {
             ProfileViewModel model = new ProfileViewModel();
@@ -95,6 +100,7 @@ namespace MyUserWebApp.MyRepository
             }
             return model;
         }
+        //аватар користувача
         public  string Avatar(string name)
         {
             var userId = FindMyUser(name).Id;
@@ -103,7 +109,7 @@ namespace MyUserWebApp.MyRepository
 
             return imagePath;
         }
-
+        //редагування профілю користувача
         public async Task<IItem> Edit(IFormFile avatarFile, EditUserViewModel model)
         {
                 MyUser user = await FindMyUserById(model.Id);

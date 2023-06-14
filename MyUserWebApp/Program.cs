@@ -14,6 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using MyUserWebApp.MyException;
+using MyUserWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MyUserWebAppContextConnection") ?? throw new InvalidOperationException("Connection string 'MyUserWebAppContextConnection' not found.");
@@ -32,6 +33,7 @@ builder.Services.AddDbContext<MyUserWebAppContext>(options => options.UseSqlServ
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<CRUD_Repository>();
 builder.Services.AddScoped<AllException>();
+builder.Services.AddScoped<UserService>();
 //builder.Services.AddAuthentication(options =>
 //{
 //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

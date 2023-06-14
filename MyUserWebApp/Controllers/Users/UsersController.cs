@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyUserWebApp.Controllers.Home;
 using MyUserWebApp.Models;
 using MyUserWebApp.MyRepository;
+using MyUserWebApp.Services;
 using MyUserWebApp.ViewModels;
 using NuGet.Protocol.Plugins;
 using System.Security.Claims;
@@ -16,13 +17,15 @@ namespace MyUserWebApp.Controllers.Users
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<MyUser> _userManager;
         private readonly CRUD_Repository _cRUD;
+        private readonly UserService _userService;
         public UsersController(ILogger<HomeController> logger, UserManager<MyUser> userManager,
-            CRUD_Repository cRUD, SignInManager<MyUser> signInManager/*,IWebHostEnvironment hostingEnvironment*/)
+            CRUD_Repository cRUD, SignInManager<MyUser> signInManager, UserService userService/*,IWebHostEnvironment hostingEnvironment*/)
         {
             _logger = logger;
             _userManager = userManager;
             _cRUD = cRUD;
             _signInManager = signInManager;
+            _userService= userService;
             //_hostingEnvironment=hostingEnvironment;
         }
         public IActionResult Index()
@@ -50,7 +53,7 @@ namespace MyUserWebApp.Controllers.Users
         [HttpPost]
         public async Task<IActionResult> EditProfile(IFormFile avatarFile, EditUserViewModel model)
         {
-            var user= await _cRUD.Edit(avatarFile, model);
+            var user= await _userService.UpdateUser(avatarFile, model);
             var result = await _userManager.UpdateAsync((MyUser)user);
             if (result.Succeeded)
             {
