@@ -21,14 +21,14 @@ namespace MyUserWebApp.Controllers.Home
         
         public async Task<IActionResult> Index()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                ViewBag.UserName = User.Identity.Name;
-                ViewBag.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                MyUser user = await _cRUD.FindMyUser(User.Identity.Name);
-                string? avatarPath = user.Image;
-                ViewBag.AvatarPath = avatarPath;
-            }
+            //if (User.Identity.IsAuthenticated)
+            //{
+            //    ViewBag.UserName = User.Identity.Name;
+            //    ViewBag.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //    MyUser user = await _cRUD.FindMyUser(User.Identity.Name);
+            //    string? avatarPath = user.Image;
+            //    ViewBag.AvatarPath = avatarPath;
+            //}
             return View();           
         }
        
