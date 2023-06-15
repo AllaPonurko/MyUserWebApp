@@ -71,16 +71,17 @@ namespace MyUserWebApp.Controllers.Users
         [HttpPost]
         public async Task<ActionResult> Delete(string userId)
         {
-            if (await _cRUD.Delete(userId) == true)
+            if (await _userService.DeleteUser(userId) == true)
 
                 return RedirectToAction("Index", "Home");
 
-            else
-            {
-                // Ошибка при удалении пользователя
-                // Обработка ошибки или перенаправление на другую страницу
-                return RedirectToAction("Error", "Home");
-            }
+            return RedirectToAction("Error", "Home");
+            //else
+            //{
+            //    // Ошибка при удалении пользователя
+            //    // Обработка ошибки или перенаправление на другую страницу
+            //    return RedirectToAction("Error", "Home");
+            //}
         }
         
         public async Task<IActionResult> ChangePassword(string id)

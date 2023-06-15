@@ -10,6 +10,8 @@ using MyUserWebApp.ViewModels;
 using MyUserWebApp.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using MyUserWebApp.MyRepository;
+using MyUserWebApp.Services;
 
 namespace MyUserWebApp.Controllers.Account
 {
@@ -22,12 +24,16 @@ namespace MyUserWebApp.Controllers.Account
         private readonly ILogger<AccountController> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly CRUD_Repository _cRUD;
+        private readonly UserService _userService;
         public AccountController(
             UserManager<MyUser> userManager,
             //IUserStore<MyUser> userStore,
             SignInManager<MyUser> signInManager,
             ILogger<AccountController> logger,
-            IEmailSender emailSender, RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender, RoleManager<IdentityRole> roleManager,
+            CRUD_Repository cRUD, UserService userService)
+
         {
             _userManager = userManager;
             //_userStore = userStore;
@@ -36,6 +42,9 @@ namespace MyUserWebApp.Controllers.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager= roleManager;
+            _cRUD = cRUD;
+            _roleManager= roleManager;
+            _userService= userService;
         }
 
         [HttpGet]
@@ -46,40 +55,46 @@ namespace MyUserWebApp.Controllers.Account
         [HttpPost]
         public async Task<IActionResult> Register(IFormCollection form, RegisterModel model)
         {
-            if (ModelState.IsValid)
-            {
-                string[] l = form["Role"].ToString().Split(",");
-                MyUser user = new MyUser { Email = model.Email, UserName = model.Email};
-                // добавляем пользователя
-                var result = await _userManager.CreateAsync(user, model.Password);
+            //if (ModelState.IsValid)
+            //{
+            //    string[] l = form["Role"].ToString().Split(",");
+            //    MyUser user = new MyUser { Email = model.Email, UserName = model.Email};
+            //    // добавляем пользователя
+            //    var result = await _userManager.CreateAsync(user, model.Password);
 
-                //получаем роль
-                List<object> roles = new List<object>();
-                foreach(string role in l)
-                {
-                    roles.Add(await _roleManager.FindByNameAsync(role));
-                }
-                
-                if (result.Succeeded==true && roles.Capacity != 0)
-                {
-                    foreach(var r in roles)
-                    {
-                      await _userManager.AddToRoleAsync(user, r.ToString());
-                    }
-                    
-                   // установка куки
-                    await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
+            //    //получаем роль
+            //    List<object> roles = new List<object>();
+            //    foreach(string role in l)
+            //    {
+            //        roles.Add(await _roleManager.FindByNameAsync(role));
+            //    }
+
+            //    if (result.Succeeded==true && roles.Capacity != 0)
+            //    {
+            //        foreach(var r in roles)
+            //        {
+            //          await _userManager.AddToRoleAsync(user, r.ToString());
+            //        }
+
+            //       // установка куки
+            //        await _signInManager.SignInAsync(user, false);
+            //        return RedirectToAction("Index", "Home");
+            //    }
+            //    else
+            //    {
+            //        foreach (var error in result.Errors)
+            //        {
+            //            ModelState.AddModelError(string.Empty, error.Description);
+            //        }
+            //    }
+            //}
+            if (ModelState.IsValid && await _userService.CreateUser(form, model) == true)
+            { 
+                return RedirectToAction("Index", "Home"); 
             }
-            return View(model);
+             
+                return View(model); 
+            
         }
 
 

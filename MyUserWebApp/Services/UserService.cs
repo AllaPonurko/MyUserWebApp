@@ -13,14 +13,15 @@ namespace MyUserWebApp.Services
             _cRUD = cRUD;
         }
 
-        public Task CreateUser(MyUser user)
+        public async Task<bool> CreateUser(IFormCollection form, RegisterModel model)
         {
-            throw new NotImplementedException();
+           return await _cRUD.Register(form, model) ;
+               
         }
 
-        public async Task<bool> DeleteUser(string id)
+        public async Task<bool> DeleteUser(string userId)
         {
-            return await _cRUD.Delete(id);
+            return await _cRUD.Delete(userId);
         }
 
         public  IAsyncEnumerable<MyUser> GetAllUsers()

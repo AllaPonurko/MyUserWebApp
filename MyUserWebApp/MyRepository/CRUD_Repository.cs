@@ -12,26 +12,32 @@ namespace MyUserWebApp.MyRepository
 {
     public class CRUD_Repository : ICRUD_Repository
     {
-        UserManager<MyUser> _userManager;
-        AllException _exciption;
-        public CRUD_Repository(UserManager<MyUser> userManager, AllException exciption)
+        private readonly UserManager<MyUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly AllException _exciption;
+        private readonly SignInManager<MyUser> _signInManager;
+        public CRUD_Repository(UserManager<MyUser> userManager, AllException exciption,
+            RoleManager<IdentityRole> roleManager, SignInManager<MyUser> signInManager)
         {
             _userManager = userManager;
             _exciption = exciption;
+            _roleManager = roleManager;
+            _signInManager = signInManager;
         }
         public Task<ICollection>? GetAllUsers()
         {
             return _userManager.Users as ICollection as Task<ICollection>;
         }
         //видалення користувача
-        public async Task<bool> Delete(string id)
+        public async Task<bool> Delete(string userId)
         {
-            MyUser user = await FindMyUserById(id);
+            MyUser user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return _exciption.RankException("User does not exist");
             }
-            IdentityResult result = await _userManager.DeleteAsync(user);
+            await _signInManager.SignOutAsync();
+            var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
                 // Успешно удалено
@@ -158,7 +164,37 @@ namespace MyUserWebApp.MyRepository
                 //TempData["Message"] = "Avatar was uploaded successfully";
                 return filePath;
         }
-
         
+        //реєстрація користувача
+        public async Task<bool> Register(IFormCollection form, RegisterModel model)
+        {
+           
+                string[] l = form["Role"].ToString().Split(",");
+                MyUser user = new MyUser { Email = model.Email, UserName = model.Email };
+                // добавляем пользователя
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                //получаем роль
+                List<object> roles = new List<object>();
+                foreach (string role in l)
+                {
+                    roles.Add(await _roleManager.FindByNameAsync(role));
+                }
+
+                if (result.Succeeded == true && roles.Capacity != 0)
+                {
+                    foreach (var r in roles)
+                    {
+                        await _userManager.AddToRoleAsync(user, r.ToString());
+                    }
+
+                    // установка куки
+                    await _signInManager.SignInAsync(user, false);
+                    return true;
+                }
+                else
+                    return false;
+            
+        }
     }
 }
