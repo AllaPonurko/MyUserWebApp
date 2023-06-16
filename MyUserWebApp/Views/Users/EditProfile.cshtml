@@ -7,8 +7,10 @@
 
 <head>
     <title>User Profile</title>
-    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">*@
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+
 </head>
 <form enctype="multipart/form-data" asp-route-id="@userId">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -54,15 +56,10 @@
 
 </form>
     <button type="button" class="btn btn-danger" data-toggle="modal" 
-    data-target="#confirmDeleteModal">Delete</button>
-    @*<form action="/Users/Delete" method="post">
-    <input type="hidden" name="userId" value="@Model.Id" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-    </form>*@
-    
+    data-target=".modal">Delete</button>
     
 <!-- Модальне вікно підтвердження видалення -->
-    <div class="modal" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+<div class="modal" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -76,15 +73,17 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <a href="@Url.Action("Delete", "Users", new { id = Model.Id })" class="btn btn-danger">Delete</a>
-                @*<button type="button" class="btn btn-danger" onclick="deleteUser()">Delete</button>*@
+                <form action="/Users/Delete" method="post">
+                    <input type="hidden" name="userId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                
             </div>
         </div>
     </div>
         
 </div>   
 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script>
     function deleteUser() {
         var userId = @Model.Id; // Отримання ідентифікатора користувача
