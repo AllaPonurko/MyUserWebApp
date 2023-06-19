@@ -42,7 +42,7 @@ namespace MyUserWebApp.Controllers.Users
                 ViewBag.UserName = User.Identity.Name;
                 ViewBag.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                EditUserViewModel model = await _cRUD.GetViewProfile(id);
+                EditUserViewModel model = await _userService.GetProfile(id);
                 return View(model);
             }
             else return RedirectToAction("Index", "Home");
@@ -53,18 +53,15 @@ namespace MyUserWebApp.Controllers.Users
         [HttpPost]
         public async Task<IActionResult> EditProfile(IFormFile avatarFile, EditUserViewModel model)
         {
-            var user= await _userService.UpdateUser(avatarFile, model);
-            var result = await _userManager.UpdateAsync((MyUser)user);
-            if (result.Succeeded)
+            var result= await _userService.UpdateUser(avatarFile, model);
+            
+            if (result==true)
             {
                 return RedirectToAction("Index","Home");
             }
-            else
+            if(result==false)
             {
-                foreach (var error in result.Errors)
-                {
-                   ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return RedirectToAction("Error", "Home");
             }
             return View(model);
         }
@@ -74,14 +71,10 @@ namespace MyUserWebApp.Controllers.Users
             if (await _userService.DeleteUser(userId) == true)
 
                 return RedirectToAction("Index", "Home");
-
+            // Ошибка при удалении пользователя
+            // Обработка ошибки или перенаправление на другую страницу
             return RedirectToAction("Error", "Home");
-            //else
-            //{
-            //    // Ошибка при удалении пользователя
-            //    // Обработка ошибки или перенаправление на другую страницу
-            //    return RedirectToAction("Error", "Home");
-            //}
+            
         }
         
         public async Task<IActionResult> ChangePassword(string id)

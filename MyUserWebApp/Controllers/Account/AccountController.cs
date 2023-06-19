@@ -18,32 +18,32 @@ namespace MyUserWebApp.Controllers.Account
     public class AccountController:Controller
     {
         private readonly SignInManager<MyUser> _signInManager;
-        private readonly UserManager<MyUser> _userManager;
+        //private readonly UserManager<MyUser> _userManager;
         //private readonly IUserStore<MyUser> _userStore;
         //private readonly IUserEmailStore<MyUser> _emailStore;
         private readonly ILogger<AccountController> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        //private readonly RoleManager<IdentityRole> _roleManager;
         private readonly CRUD_Repository _cRUD;
         private readonly UserService _userService;
         public AccountController(
-            UserManager<MyUser> userManager,
+            //UserManager<MyUser> userManager,
             //IUserStore<MyUser> userStore,
             SignInManager<MyUser> signInManager,
             ILogger<AccountController> logger,
-            IEmailSender emailSender, RoleManager<IdentityRole> roleManager,
-            CRUD_Repository cRUD, UserService userService)
+            IEmailSender emailSender, /*RoleManager<IdentityRole> roleManager,*/
+            /*CRUD_Repository cRUD,*/ UserService userService)
 
         {
-            _userManager = userManager;
+            //_userManager = userManager;
             //_userStore = userStore;
             //_emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _roleManager= roleManager;
-            _cRUD = cRUD;
-            _roleManager= roleManager;
+            //_roleManager= roleManager;
+            //_cRUD = cRUD;
+            //_roleManager= roleManager;
             _userService= userService;
         }
 
@@ -55,46 +55,12 @@ namespace MyUserWebApp.Controllers.Account
         [HttpPost]
         public async Task<IActionResult> Register(IFormCollection form, RegisterModel model)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    string[] l = form["Role"].ToString().Split(",");
-            //    MyUser user = new MyUser { Email = model.Email, UserName = model.Email};
-            //    // добавляем пользователя
-            //    var result = await _userManager.CreateAsync(user, model.Password);
-
-            //    //получаем роль
-            //    List<object> roles = new List<object>();
-            //    foreach(string role in l)
-            //    {
-            //        roles.Add(await _roleManager.FindByNameAsync(role));
-            //    }
-
-            //    if (result.Succeeded==true && roles.Capacity != 0)
-            //    {
-            //        foreach(var r in roles)
-            //        {
-            //          await _userManager.AddToRoleAsync(user, r.ToString());
-            //        }
-
-            //       // установка куки
-            //        await _signInManager.SignInAsync(user, false);
-            //        return RedirectToAction("Index", "Home");
-            //    }
-            //    else
-            //    {
-            //        foreach (var error in result.Errors)
-            //        {
-            //            ModelState.AddModelError(string.Empty, error.Description);
-            //        }
-            //    }
-            //}
+            
             if (ModelState.IsValid && await _userService.CreateUser(form, model) == true)
             { 
                 return RedirectToAction("Index", "Home"); 
-            }
-             
+            } 
                 return View(model); 
-            
         }
 
 
@@ -104,9 +70,7 @@ namespace MyUserWebApp.Controllers.Account
         
         [HttpGet]
         public async Task<IActionResult> LoginAsync(string returnUrl=null)
-
-        {
-            
+        {           
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
@@ -127,11 +91,8 @@ namespace MyUserWebApp.Controllers.Account
         {
             if (ModelState.IsValid)
             {
-                var result =
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-                if (result.Succeeded)
-                {
-                    
+                if (await _userService.Login(model)==true)
+                {                   
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         if (User.Identity.IsAuthenticated)
@@ -141,7 +102,6 @@ namespace MyUserWebApp.Controllers.Account
                             ViewBag.UserEmail = model.Email;
                             
                         }
-                        _logger.LogInformation("User logged in");
                         return Redirect(model.ReturnUrl);
                     }
                     else
@@ -151,7 +111,7 @@ namespace MyUserWebApp.Controllers.Account
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                    ModelState.AddModelError("", "Wrong username and/or password");
                 }
             }
             return View(model);
@@ -162,8 +122,9 @@ namespace MyUserWebApp.Controllers.Account
         public async Task<IActionResult> Logout()
         {
             // удаляем аутентификационные куки
-            await _signInManager.SignOutAsync();
+            if(await _userService.LogOut()==true)
             return RedirectToAction("Index", "Home");
+            return RedirectToAction("Error", "Home");
         }
 
         //public async Task OnGetAsync(string returnUrl = null)

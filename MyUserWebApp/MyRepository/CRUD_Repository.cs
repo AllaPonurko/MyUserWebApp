@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using MyUserWebApp.Models;
 using MyUserWebApp.ViewModels;
 using System.Security.Claims;
-using NPOI.SS.Formula.Functions;
-using System.Web.Mvc;
 using MyUserWebApp.MyException;
 using System.Collections;
+using MyUserWebApp.Controllers.Account;
+
+
 
 namespace MyUserWebApp.MyRepository
 {
@@ -16,13 +16,16 @@ namespace MyUserWebApp.MyRepository
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AllException _exciption;
         private readonly SignInManager<MyUser> _signInManager;
+        private readonly ILogger<AccountController> _logger;
         public CRUD_Repository(UserManager<MyUser> userManager, AllException exciption,
-            RoleManager<IdentityRole> roleManager, SignInManager<MyUser> signInManager)
+            RoleManager<IdentityRole> roleManager, SignInManager<MyUser> signInManager,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _exciption = exciption;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
         public Task<ICollection>? GetAllUsers()
         {
@@ -49,9 +52,8 @@ namespace MyUserWebApp.MyRepository
                 return false;
             }
         }
-
-        
-
+  
+        //отримання профіля користувача для редагування
         public async Task<EditUserViewModel> GetViewProfile(string id)
         {
             EditUserViewModel model = new EditUserViewModel();
@@ -128,7 +130,8 @@ namespace MyUserWebApp.MyRepository
                     user.LastName = model.LastName;
                     user.AboutMe = model.AboutMe;
                     user.Image = await UploadAvatar(avatarFile,model.Id);
-                    return (IItem)user;
+                    await _userManager.UpdateAsync(user);
+                return (IItem)user;
                 }
             return (IItem)model;
         }
@@ -195,6 +198,29 @@ namespace MyUserWebApp.MyRepository
                 else
                     return false;
             
+        }
+
+        //авторизація користувача
+        public async Task<bool> LoginAsync(LoginModel model)
+        {
+            var result =
+                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+            if (result.Succeeded)
+            {
+ 
+                _logger.LogInformation("User logged in");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        //вихід із аккаунта
+        public async Task<bool> LogOut()
+        {
+            await _signInManager.SignOutAsync(); 
+            return true;
         }
     }
 }
